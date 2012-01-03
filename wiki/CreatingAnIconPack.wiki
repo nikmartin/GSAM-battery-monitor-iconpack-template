@@ -6,46 +6,46 @@ As of version 2.2, Badass Battery Monitor (all editions) now supports third part
 
 = Rules =
 
-* Your icon pack provides icons suitable for showing battery status. 
-* Your icon pack shows a standard notification message with a pending intent that launches Badass Battery Monitor.  There should be no need to modify the template code.
-* You are free to distribute your icon packs as you see fit - in any Market/Appstore, and for whatever price.
-* GSam Labs reserves the right to block your icon packs usage via updates to Badass Battery Monitor if you do not follow the above rules.
+ * Your icon pack provides icons suitable for showing battery status. 
+ * Your icon pack shows a standard notification message with a pending intent that launches Badass Battery Monitor.  There should be no need to modify the template code.
+ * You are free to distribute your icon packs as you see fit - in any Market/Appstore, and for whatever price.
+ * GSam Labs reserves the right to block your icon packs usage via updates to Badass Battery Monitor if you do not follow the above rules.
 
 = Details =
  
 An Icon Pack is an installable APK which provides the following services for Badass Battery Monitor (BBM)
 
-*  Provides one or more sets of battery icons (one icon for each %) and a level-list drawable for each set.  These icons get displayed as Notification messages, and also in the available Widget.
-*  Acts as a content provider - telling BBM the name(s) of the icon set(s), and the resource URI to use to access the level-list drawable.
-*  Receives broadcast intents from Badass Battery Monitor with details for what to show in the Notification Bar.  Unfortunately, the notification API requires that the calling app own the specified icon resource (can't use URIs), therefore the IconPack app itself must display the notification.  The core Badass Battery Monitor application will supply all the needed text to show.
+ * Provides one or more sets of battery icons (one icon for each %) and a level-list drawable for each set.  These icons get displayed as Notification messages, and also in the available Widget.
+ * Acts as a content provider - telling BBM the name(s) of the icon set(s), and the resource URI to use to access the level-list drawable.
+ * Receives broadcast intents from Badass Battery Monitor with details for what to show in the Notification Bar.  Unfortunately, the notification API requires that the calling app own the specified icon resource (can't use URIs), therefore the IconPack app itself must display the notification.  The core Badass Battery Monitor application will supply all the needed text to show.
 
 = Instructions =
 
-* You need to know the basics of how to develop Android apps.   We'll assume you have Eclipse set up with subversion and with your android SDK, and know how to use it:  http://developer.android.com/sdk/index.html
-* Create a new project by checking out the code from here:  
+ * You need to know the basics of how to develop Android apps.   We'll assume you have Eclipse set up with subversion and with your android SDK, and know how to use it:  http://developer.android.com/sdk/index.html
+ * Create a new project by checking out the code from here:  
 svn checkout http://badass-battery-monitor-iconpack-template.googlecode.com/svn/trunk/ badass-battery-monitor-iconpack-template-read-only 
-* Make sure the project builds in Eclipse with no errors
-* Now - let's modify...
-** AndroidManifest.xml:  You MUST modify the following:
-*** Package name.  This needs to be unique
-*** Provider Authorities.  Should be in the form: com.gsamlabs.bbm.iconpacks.MY.PACKAGE.NAME 
-*** Intent Filter Actions:  Again - use your package names in the form:  my.package.name.SHOW_NOTIFICATION
+ * Make sure the project builds in Eclipse with no errors
+ * Now - let's modify...
+  * AndroidManifest.xml:  You MUST modify the following:
+   * Package name.  This needs to be unique
+   * Provider Authorities.  Should be in the form: com.gsamlabs.bbm.iconpacks.MY.PACKAGE.NAME 
+   * Intent Filter Actions:  Again - use your package names in the form:  my.package.name.SHOW_NOTIFICATION
 
-** res/values/strings.xml:  You MUST modify the following:
-*** app_name:  This is the name of your icon pack
-*** icon_name1/2/etc:  This is the name you want Badass Battery Monitor to use in the theme chooser menu.  Keep it short as there is not much real-estate on phones.  You will need one of these per icon set.
+  * res/values/strings.xml:  You MUST modify the following:
+   * app_name:  This is the name of your icon pack
+   * icon_name1/2/etc:  This is the name you want Badass Battery Monitor to use in the theme chooser menu.  Keep it short as there is not much real-estate on phones.  You will need one of these per icon set.
 
-** res/drawable/batt_theme1.xml:   If you don't change the icon names, no changes are needed here.  If you want more than one icon set, create batt_theme2.xml, batt_theme3.xml, etc. and modify the icon file names appropriately.
+  * res/drawable/batt_theme1.xml:   If you don't change the icon names, no changes are needed here.  If you want more than one icon set, create batt_theme2.xml, batt_theme3.xml, etc. and modify the icon file names appropriately.
 
-** res/drawable-hdpi:  This contains all of your icons.  A 72x72 pixel icon in the hdpi folder works fairly well.  You're free to provide different sizes for the different resolutions - but there generally isn't a need for this.  There should be one icon per percent.  You can provide as many icon sets as you want - just create new level-list drawables for each set.
+  * res/drawable-hdpi:  This contains all of your icons.  A 72x72 pixel icon in the hdpi folder works fairly well.  You're free to provide different sizes for the different resolutions - but there generally isn't a need for this.  There should be one icon per percent.  You can provide as many icon sets as you want - just create new level-list drawables for each set.
 
-** src/com.yourcompany.bbmiconpack:  Refactor (rename) this to the package name you provided in the AndroidManifest.xml.  If you use the Eclipse refactor, it should take care of the underlying java file package declarations.
+  * src/com.yourcompany.bbmiconpack:  Refactor (rename) this to the package name you provided in the AndroidManifest.xml.  If you use the Eclipse refactor, it should take care of the underlying java file package declarations.
 
-** src/com.yourcompany.bbmiconpack/IconContentProvider.java:  Modify the 'ICONS_AND_NAMES' variable if you have more than one set of icons.  See the comments in the file for details. If you only have one icon set, and haven't change the file names, no modifications should be needed.
+  * src/com.yourcompany.bbmiconpack/IconContentProvider.java:  Modify the 'ICONS_AND_NAMES' variable if you have more than one set of icons.  See the comments in the file for details. If you only have one icon set, and haven't change the file names, no modifications should be needed.
 
-** src/com.yourcompany.bbmiconpack/IconBroadcastReceiver.java:  You should NOT modify this file other than it's package name.
+  * src/com.yourcompany.bbmiconpack/IconBroadcastReceiver.java:  You should NOT modify this file other than it's package name.
 
-* That's it - now compile, and deploy it.
+ * That's it - now compile, and deploy it.
 
 
 = Putting it in the Market =
