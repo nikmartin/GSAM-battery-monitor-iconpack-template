@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CHANGE REQUIRED - Icon & App Name -->
+    <!-- The app name is the name of your app - it's how it will appear in the market and in the 'Manage Applications' menu of your device -->
+    <string name="app_name">Badass Battery Monitor - Your Nice Icon Pack</string>
+	<!-- The icon name is what shows up in the Badass Battery Monitor Icon Theme menu -->
+    <string name="icon_name1">Circle - Big Visible Numbers</string>
+    <!-- 
+    <string name="icon_name2">Some Other Icon Pack Here...</string>
+    <string name="icon_name3">Etc...</string>
+     -->
+
+</resources>

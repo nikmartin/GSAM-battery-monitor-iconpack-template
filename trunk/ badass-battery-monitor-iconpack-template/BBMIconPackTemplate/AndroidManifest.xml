@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Edit the Package Name to match your package name -->
+<!-- Do NOT use 'com.yourcompany' as your prefix - use your own -->
+<!-- CHANGE REQUIRED - PACKAGE NAME -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="auto" 
+    package="com.yourcompany.bbmiconpack"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10"/>
+
+    <!-- You may modify the application icon.  However for consistency, please do  -->
+    <!-- not use the 50% icon.  Recommend using the 75% icon. -->
+    <application
+        android:icon="@drawable/batt75"
+        android:label="@string/app_name" android:debuggable="false">
+        
+        
+        <!-- Modify the authority name.  It should be in the form: -->
+        <!-- authorities="com.gsamlabs.bbm.iconpacks.MY.PACKAGE.NAME" -->
+        <!-- It's vital it starts with 'com.gsamlabs.bbm.iconpacks'.  Anything after is up to you, but should be unique, so use your package name -->
+		<!-- CHANGE REQUIRED - AUTHORITIES -->
+    	<provider android:name=".IconContentProvider"
+     	     android:authorities="com.gsamlabs.bbm.iconpacks.com.yourcompany.bbmiconpack" />
+    	<receiver android:name=".IconBroadcastReceiver">
+    	    <intent-filter>
+    	        <!-- Modify the following name prefix to match your package name.  Leave the .SHOW_NOTIFICATION & .CANCEL_NOTIFICATION text -->
+    	        <!-- NOTE:  It's vital that these be in the form:  name="my.package.name.SHOW_NOTIFICATION" -->
+    	        <!-- CHANGE REQUIRED - INTENT FILTER ACTIONS -->
+                <action android:name="com.yourcompany.bbmiconpack.SHOW_NOTIFICATION" />
+                <action android:name="com.yourcompany.bbmiconpack.CANCEL_NOTIFICATION" />
+            </intent-filter>    	    
+    	</receiver>
+    </application>
+    
+
+</manifest>
