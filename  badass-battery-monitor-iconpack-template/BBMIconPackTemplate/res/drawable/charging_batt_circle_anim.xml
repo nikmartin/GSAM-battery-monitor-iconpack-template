@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- You can easily customize this to have as many animations in your icon as you wish.  The
+sample just has 5.  Feel free to change timings, etc. -->
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false" >
+    <item android:duration="1000" android:drawable="@drawable/charging_batt1"/>
+    <item android:duration="1000" android:drawable="@drawable/charging_batt2"/>
+    <item android:duration="1000" android:drawable="@drawable/charging_batt3"/>
+    <item android:duration="1000" android:drawable="@drawable/charging_batt4"/>
+    <item android:duration="2000" android:drawable="@drawable/charging_batt5"/>
+</animation-list>

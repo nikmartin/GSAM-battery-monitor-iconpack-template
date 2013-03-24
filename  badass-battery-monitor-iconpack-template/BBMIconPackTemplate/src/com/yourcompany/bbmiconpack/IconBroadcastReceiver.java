@@ -1,5 +1,5 @@
 /*   
- * Copyright 2012 GSam Labs
+ * Copyright 2013 GSam Labs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.yourcompany.bbmiconpack;
 
+import java.util.HashMap;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -25,7 +27,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 /**
@@ -49,10 +53,13 @@ import android.util.Log;
  */
 public class IconBroadcastReceiver extends BroadcastReceiver {
     
-    private static final String TAG = IconBroadcastReceiver.class.getName();
+    public static final String TAG = IconBroadcastReceiver.class.getName();
+    public static boolean DEBUG = false;
     private static String SHOW_NOTIFICATION = null;
     private static String CANCEL_NOTIFICATION = null;
     private static final int BAT_NOTIFICATION_ID = 1; 
+
+    HashMap<String, Boolean> mSupportsChargingIcon = new HashMap<String, Boolean>();
     
     private NotificationManager mNM = null;
 
@@ -70,16 +77,75 @@ public class IconBroadcastReceiver extends BroadcastReceiver {
         {
             mNM = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         }
-        Log.d(TAG, intent.toString());
+        if (DEBUG)
+        {
+            Log.d(TAG, intent.toString());
+        }
         if (intent.getAction().equals(SHOW_NOTIFICATION))
         {
+            StringBuilder sb = new StringBuilder();
             String iconToShow = intent.getStringExtra("ICON_TO_SHOW");
+            sb.append("ICON_TO_SHOW: ").append(iconToShow).append("\n");
             String headText = intent.getStringExtra("HEAD_TEXT");
+            sb.append("HEAD_TEXT: ").append(headText).append("\n");
             String detailText = intent.getStringExtra("DETAIL_TEXT");
+            sb.append("DETAIL_TEXT: ").append(detailText).append("\n");
             String pkgName = intent.getStringExtra("ORIGINATING_PACKAGE");
+            sb.append("ORIGINATING_PACKAGE: ").append(pkgName).append("\n");
             String intentClass = intent.getStringExtra("PENDING_INTENT_CLASS");
+            sb.append("PENDING_INTENT_CLASS: ").append(intentClass).append("\n");
             int iconLevel = intent.getIntExtra("ICON_LEVEL", 0);
+            sb.append("ICON_LEVEL: ").append(iconLevel).append("\n");
+            boolean isCharging = intent.getBooleanExtra("IS_CHARGING", false);
+            sb.append("IS_CHARGING: ").append(isCharging).append("\n");
+            if (isCharging && (iconLevel != 0))
+            {
+                Uri icon = Uri.parse(iconToShow);
+                if (!icon.getAuthority().equals(context.getPackageName()))
+                {
+
+                    Boolean supportsCharging = mSupportsChargingIcon.get(iconToShow.toString());
+                    if (supportsCharging == null)
+                    {
+                        supportsCharging = false;
+                        try
+                        {                           
+                            Resources res = context.getPackageManager().getResourcesForApplication(icon.getAuthority());
+                            String path = icon.getPath();
+                            int iconId = Integer.parseInt(path.substring(path.lastIndexOf('/')+1));                        
+                            Drawable myDrawable = res.getDrawable(iconId);
+                            if (myDrawable != null)
+                            {
+                                myDrawable.setLevel(iconLevel + 100);                        
+                                if (myDrawable.getCurrent() != null)
+                                {
+                                    supportsCharging = true;
+                                }
+                            }
+                        } catch (Exception e)
+                        {
+                            Log.e(TAG, "Malformed Notification Icon URI");
+                        } finally
+                        {
+                            mSupportsChargingIcon.put(iconToShow, supportsCharging);
+                        }
+                    }
+                    iconLevel = supportsCharging ? iconLevel + 100 : iconLevel;
+                } else {
+                    iconLevel += 100;
+                }
+            }
             long createTime = intent.getLongExtra("CREATE_TIME", 0);
+            sb.append("CREATE_TIME: ").append(createTime).append("\n");
+            boolean showNotification = intent.getBooleanExtra("SHOW_NOTIFICATION", true);
+            sb.append("SHOW_NOTIFICATION: ").append(showNotification).append("\n");
+            boolean showNotificationOnly = intent.getBooleanExtra("SHOW_NOTIFICATION_ONLY", false);
+            sb.append("SHOW_NOTIFICATION_ONLY: ").append(showNotificationOnly).append("\n");
+
+            if (DEBUG)
+            {
+                Log.d(TAG, "Extras: "+sb.toString());
+            }
             
             if ((iconToShow == null) || (headText == null) || (detailText == null) || (pkgName == null) || (intentClass == null))
             {
@@ -91,8 +157,20 @@ public class IconBroadcastReceiver extends BroadcastReceiver {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent contentIntent = PendingIntent.getActivity(context, 0,  theIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            Notification not = createNotificationObject(context, Uri.parse(iconToShow), headText, detailText, iconLevel, createTime, contentIntent);
-            mNM.notify(BAT_NOTIFICATION_ID, not);
+            // If this is jelly bean, we can set the notification priority so the icon doesn't show. If it's not, then we just don't show the notification at all!
+            if (showNotification || showNotificationOnly)
+            {
+                Notification not = createNotificationObject(context, Uri.parse(iconToShow), headText, detailText, iconLevel, createTime, contentIntent);
+
+                if (!showNotification  && showNotificationOnly && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN))
+                {
+                    not.priority = Notification.PRIORITY_MIN;
+                }
+                mNM.notify(BAT_NOTIFICATION_ID, not);
+            } else
+            {
+                mNM.cancelAll();
+            }
             
         } else if (intent.getAction().equals(CANCEL_NOTIFICATION))
         {
